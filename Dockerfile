@@ -7,15 +7,10 @@ WORKDIR /home/node/app
 RUN npm install
 RUN npx ng build
 
-FROM node:alpine
+FROM nginx:alpine
 
-COPY --from=build /home/node/app/dist/notes /home/node/app/
+COPY --from=build /home/node/app/dist/notes /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-RUN npm install -g serve
-
-WORKDIR /home/node/app
-
-EXPOSE 5000
-
-CMD ["serve", "-s", "notes"]
+EXPOSE 80
 
