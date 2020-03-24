@@ -1,12 +1,21 @@
-FROM node:alpine
+FROM node:alpine AS build
 MAINTAINER wuhanstudio 
 
 COPY . /home/node/app
 WORKDIR /home/node/app
 
 RUN npm install
-RUN npm install -g serve
 RUN npx ng build
 
+FROM node:alpine
+
+COPY --from=build /home/node/app/dist/notes /home/node/app/
+
+RUN npm install -g serve
+
+WORKDIR /home/node/app
+
 EXPOSE 5000
-CMD ["serve", "-s", "dist/notes"]
+
+CMD ["serve", "-s", "notes"]
+
